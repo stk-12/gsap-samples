@@ -4,48 +4,76 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SplitText Fade-in</title>
+  <link rel="stylesheet" href="../assets/css/common.css">
   <style>
     body {
-      font-family: sans-serif;
       text-align: center;
       margin-top: 50px;
     }
-    #text {
-      font-size: 2rem;
-      opacity: 0;
+    .text {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 6rem;
     }
   </style>
 </head>
-<body>  <div id="text">テキストアニメーション</div>
+<body>
+  <div class="text js-split-chars">Chars Text Animation</div>
+  <div class="text js-split-words">Words Text Animation</div>
+  <div class="text js-split-lines">Lines Text Animation. Lines Text Animation. Lines Text Animation. Lines Text Animation.</div>
+  <div class="text js-split-lines-mask">Lines Text Animation inside Mask. Lines Text Animation inside Mask. Lines Text Animation inside Mask.</div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script>
-    function simpleSplitText(selector) {
-      const element = document.querySelector(selector);
-      const original = element.textContent;
-      element.textContent = '';
-      const chars = original.split('').map(char => {
-        const span = document.createElement('span');
-        span.textContent = char;
-        element.appendChild(span);
-        return span;
-      });
-      return {
-        chars,
-        revert() {
-          element.textContent = original;
-        }
-      };
-    }
+  <button type="button" class="js-play-btn">Play Animations</button>
 
-    const split = simpleSplitText('#text');
-    gsap.set(split.chars, { opacity: 0 });
-    gsap.to(split.chars, {
-      opacity: 1,
-      duration: 0.5,
-      stagger: 0.05,
-      onComplete: () => split.revert()
-    });
-  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script>
+  gsap.registerPlugin(SplitText);
+
+  // let tlChars, tlWords, tlLines;
+  let splitChars, splitWords, splitLines, splitLinesMask, tl;
+
+  const setSplitText = () => {
+    // リセット
+    splitChars && splitChars.revert();
+    splitWords && splitWords.revert();
+    splitLines && splitLines.revert();
+    splitLinesMask && splitLinesMask.revert();
+
+    splitChars = SplitText.create(".js-split-chars", { type: "chars" });
+    splitWords = SplitText.create(".js-split-words", { type: "words" });
+    splitLines = SplitText.create(".js-split-lines", { type: "lines" });
+    splitLinesMask = SplitText.create(".js-split-lines-mask", { type: "lines", mask: "lines" }); // 指定した要素を二重でラップしてマスク
+  }
+
+  const setAnimation = () => {
+    // リセット
+    tl && tl.kill();
+
+    tl = gsap.timeline({ defaults: {duration: 0.8, ease: "power4.out"} });
+    tl.from(splitChars.chars, { y: 40, autoAlpha: 0, stagger: 0.04 }, 0)
+      .from(splitWords.words, { y: 40, autoAlpha: 0, stagger: 0.2 }, 0.3)
+      .from(splitLines.lines, { y: 40, autoAlpha: 0, stagger: 0.2 }, 0.6)
+      .from(splitLinesMask.lines, { y: 40, stagger: 0.2 }, 0.9);
+  }
+
+  setSplitText();
+  setAnimation();
+
+  document.querySelector('.js-play-btn').addEventListener('click', () => {
+    tl.restart();
+  });
+
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      setSplitText();
+      setAnimation();
+    }, 100);
+  });
+</script>
+
 </body>
 </html>
