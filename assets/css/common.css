@@ -30,16 +30,15 @@ button {
   font-size: 2rem;
   font-weight: 400;
   background: #000;
-  padding: 0.5rem 3rem;
+  padding: 1rem 4rem;
   border: 2px solid #000;
   font-family: var(--font-en);
   cursor: pointer;
-  transition: background 0.3s var(--ease-out), color 0.3s var(--ease-out);
 }
 
-@media (hover: hover) {
+/* @media (hover: hover) {
   button:hover {
     color: #000;
     background: #fff;
   }
-}
+} */
