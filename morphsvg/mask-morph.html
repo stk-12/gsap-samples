@@ -3,28 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Morphing Number Mask (GSAP MorphSVG)</title>
+  <title>Morphing Number Mask</title>
   <style>
     :root{
-      --bg:#0b1220;     /* 背景 */
-      --ui:#e5e7eb;     /* UI文字 */
+      --bg:#0b1220;
+      --ui:#e5e7eb;
     }
-    *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;
-      display:grid;
-      grid-template-rows:auto 1fr;
-      gap:16px;
+      display: flex;
       background:var(--bg);
-      color:var(--ui);
-      font-family: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP","Hiragino Sans","Helvetica Neue",Arial;
+      place-items: center;
     }
-    header{padding:20px;text-align:center}
-    header h1{margin:0;font-size:clamp(18px,3.8vw,26px);font-weight:700;letter-spacing:.01em}
     .stage{
       position:relative;
-      width:min(900px, 94vw);
+      width: max(500px, 50vw);
+      height: max(500px, 50vw);
       margin-inline:auto;
       aspect-ratio: 1 / 1;
       border-radius:16px;
