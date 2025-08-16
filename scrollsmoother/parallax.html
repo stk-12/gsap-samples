@@ -7,9 +7,24 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@3.0.2/destyle.css">
 <link rel="stylesheet" href="../assets/css/common.css">
 <style>
+:root {
+  --gap: 10px;
+}
 body {
   background: #111;
   color: #fff;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+    position: fixed;
+    top: 50%;
+    left: 0;
+    pointer-events: none;
+  }
 }
 header {
   position: fixed;
@@ -32,35 +47,51 @@ header {
 .section {
   width: 100%;
   min-height: 100vh;
+  position: relative;
+  padding: 0 var(--gap);
 }
 
 #section1 {
   background: #222;
+  display: flex;
+  align-items: center;
+
+  /* padding-top: 20vh; */
 }
 #section2 {
   background: #333;
+
+  display: flex;
+  align-items: center;
 }
 #section3 {
   background: #444;
 }
 
-.imgs {
+.imgs-01 {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  column-gap: 40px;
-}
-.img {
-  position: relative;
-  .text {
-    color: #fff;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  column-gap: var(--gap);
+  .img {
+    position: relative;
+    aspect-ratio: 1 / 2;
+    .text {
+      color: #fff;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 }
 .parallax-img {
   position: relative;
+  height: 100%;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 </style>
 </head>
@@ -79,44 +110,80 @@ header {
     <div id="smooth-content">
     
       <main>
-        <section class="section" id="section1">
-          
-        </section>
         
-        <section class="section" id="section2">
-          <div class="imgs">
+        
+        <section class="section" id="section1">
+
+          <div class="imgs-01">
             <div class="img">
               <div class="parallax-img" data-speed="1">
-                <img src="https://picsum.photos/id/18/400/400" alt="">
+                <img src="https://images.unsplash.com/photo-1688926983829-01728e16d96c?q=80&w=1000&auto=format&fit=crop" alt="">
                 <p class="text">data-speed:1</p>
               </div>
             </div>
             <div class="img">
               <div class="parallax-img" data-speed="0.75">
-                <img src="https://picsum.photos/id/18/400/400" alt="">
+                <img src="https://images.unsplash.com/photo-1532800961151-7a455e21b8ab?q=80&w=1000&auto=format&fit=crop" alt="">
                 <p class="text">data-speed:0.75</p>
               </div>
             </div>
             <div class="img">
               <div class="parallax-img" data-speed="1.25">
-                <img src="https://picsum.photos/id/18/400/400" alt="">
+                <img src="https://images.unsplash.com/photo-1542397284385-6010376c5337?q=80&w=1000&auto=format&fit=crop" alt="">
                 <p class="text">data-speed:1.25</p>
               </div>
             </div>
             <div class="img">
               <div class="parallax-img" data-speed="clamp(0.5)">
-                <img src="https://picsum.photos/id/18/400/400" alt="">
+                <img src="https://images.unsplash.com/photo-1566814613276-72fbf5926e56?q=80&w=1000&auto=format&fit=crop" alt="">
                 <p class="text">data-speed:clamp(0.75)</p>
               </div>
             </div>
             <div class="img">
               <div class="parallax-img" data-speed="clamp(1.25)">
-                <img src="https://picsum.photos/id/18/400/400" alt="">
+                <img src="https://images.unsplash.com/photo-1694286912019-6ec5308a5d06?q=80&w=1000&auto=format&fit=crop" alt="">
                 <p class="text">data-speed:clamp(1.25)</p>
               </div>
             </div>
           </div>
           
+        </section>
+
+        <section class="section" id="section2">
+          
+           <div class="imgs-01">
+            <div class="img">
+              <div class="parallax-img" data-lag="1">
+                <img src="https://images.unsplash.com/photo-1688926983829-01728e16d96c?q=80&w=1000&auto=format&fit=crop" alt="">
+                <p class="text">ddata-lag:1</p>
+              </div>
+            </div>
+            <div class="img">
+              <div class="parallax-img" data-lag="0.75">
+                <img src="https://images.unsplash.com/photo-1532800961151-7a455e21b8ab?q=80&w=1000&auto=format&fit=crop" alt="">
+                <p class="text">data-lag:0.75</p>
+              </div>
+            </div>
+            <div class="img">
+              <div class="parallax-img" data-lag="1.25">
+                <img src="https://images.unsplash.com/photo-1542397284385-6010376c5337?q=80&w=1000&auto=format&fit=crop" alt="">
+                <p class="text">data-lag:1.25</p>
+              </div>
+            </div>
+            <div class="img">
+              <div class="parallax-img" data-lag="clamp(0.5)">
+                <img src="https://images.unsplash.com/photo-1566814613276-72fbf5926e56?q=80&w=1000&auto=format&fit=crop" alt="">
+                <p class="text">data-lag:clamp(0.75)</p>
+              </div>
+            </div>
+            <div class="img">
+              <div class="parallax-img" data-lag="clamp(1.25)">
+                <img src="https://images.unsplash.com/photo-1694286912019-6ec5308a5d06?q=80&w=1000&auto=format&fit=crop" alt="">
+                <p class="text">data-lag:clamp(1.25)</p>
+              </div>
+            </div>
+          </div>
+
         </section>
         
         <section class="section" id="section3">
