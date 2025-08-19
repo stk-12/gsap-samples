@@ -38,8 +38,28 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Physics2DPlugin.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/lil-gui@0.18/dist/lil-gui.umd.min.js"></script>
 <script>
 gsap.registerPlugin(Physics2DPlugin);
+
+// lil-guiで編集するパラメータ
+const params = {
+  angleMin: 0,
+  angleMax: 360,
+  velocityMin: 200,
+  velocityMax: 500,
+  gravity: 800
+};
+
+// lil-guiのセットアップ
+const gui = new lil.GUI();
+gui.add(params, 'angleMin', 0, 360, 1).name('最小角度');
+gui.add(params, 'angleMax', 0, 360, 1).name('最大角度');
+gui.add(params, 'velocityMin', 0, 1000, 1).name('最小速度');
+gui.add(params, 'velocityMax', 0, 1000, 1).name('最大速度');
+gui.add(params, 'gravity', 0, 2000, 1).name('重力');
+
 
 document.addEventListener("click", (e) => {
   const numParticles = 20;
@@ -58,9 +78,9 @@ function createParticle(x, y) {
   gsap.to(p, {
     duration: gsap.utils.random(0.8, 1.5),
     physics2D: {
-      angle: gsap.utils.random(0, 360),    // 発射角度
-      velocity: gsap.utils.random(200, 500), // 速度(px/sec)
-      gravity: 800                          // 下方向の重力
+      angle: gsap.utils.random(params.angleMin, params.angleMax),    // 発射角度
+      velocity: gsap.utils.random(params.velocityMin, params.velocityMax), // 速度(px/sec)
+      gravity: params.gravity                          // 下方向の重力
     },
     opacity: 0,
     onComplete: () => p.remove(),
