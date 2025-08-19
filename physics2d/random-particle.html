@@ -45,24 +45,28 @@ gsap.registerPlugin(Physics2DPlugin);
 
 // lil-guiで編集するパラメータ
 const params = {
+  count: 20,
   angleMin: 0,
   angleMax: 360,
   velocityMin: 200,
   velocityMax: 500,
-  gravity: 800
+  gravity: 800,
+  friction: 0,
 };
 
 // lil-guiのセットアップ
 const gui = new lil.GUI();
+gui.add(params, 'count', 1, 100, 1).name('パーティクル数');
 gui.add(params, 'angleMin', 0, 360, 1).name('最小角度');
 gui.add(params, 'angleMax', 0, 360, 1).name('最大角度');
 gui.add(params, 'velocityMin', 0, 1000, 1).name('最小速度');
 gui.add(params, 'velocityMax', 0, 1000, 1).name('最大速度');
 gui.add(params, 'gravity', 0, 2000, 1).name('重力');
+gui.add(params, 'friction', 0, 1, 0.01).name('摩擦');
 
 
 document.addEventListener("click", (e) => {
-  const numParticles = 20;
+  const numParticles = params.count;
   for (let i = 0; i < numParticles; i++) {
     createParticle(e.clientX, e.clientY);
   }
@@ -80,7 +84,8 @@ function createParticle(x, y) {
     physics2D: {
       angle: gsap.utils.random(params.angleMin, params.angleMax),    // 発射角度
       velocity: gsap.utils.random(params.velocityMin, params.velocityMax), // 速度(px/sec)
-      gravity: params.gravity                          // 下方向の重力
+      gravity: params.gravity, // 下方向の重力
+      friction: params.friction, // 摩擦（空気抵抗）0〜1
     },
     opacity: 0,
     onComplete: () => p.remove(),
