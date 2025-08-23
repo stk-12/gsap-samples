@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ScrollSmoother + lil-gui Demo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/destyle.css@3.0.2/destyle.css">
+<link rel="stylesheet" href="../assets/css/common.css">
+<style>
+:root{ --gap:10px; }
+html,body{ height:100%; }
+body{ background:#111; color:#fff; }
+header{
+  position:fixed; inset:0 auto auto 0; width:100%; z-index:100;
+}
+header ul{ display:flex; justify-content:center; align-items:center; gap:20px; }
+header a{ display:block; color:#fff; padding:20px 0; }
+
+.section{
+  width:100%; min-height:100vh; position:relative; padding:0 var(--gap);
+  overflow:hidden; display:flex; align-items:center; justify-content:center;
+}
+#section1{ background:#222; }
+#section2{ background:#111; }
+#section3{ background:#222; }
+#section4{ background:#111; }
+
+h1 {
+  font-size: 5vw;
+}
+
+h2 {
+  font-size: 3vw;
+}
+
+.btn-pause {
+  width:24rem;
+  text-align:center;
+  z-index: 1000;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  z-index: 900;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s linear;
+
+  &.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+</style>
+</head>
+<body>
+  <header class="header">
+    <nav>
+      <ul>
+        <li><a href="#section1">Anchor1</a></li>
+        <li><a href="#section2">Anchor2</a></li>
+        <li><a href="#section3">Anchor3</a></li>
+        <li><a href="#section4">Anchor4</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ScrollSmootherのラッパ -->
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main>
+        <section class="section"><h1>ScrollSmoother Demo</h1></section>
+        <section class="section" id="section1"><h2>Section 1</h2></section>
+        <section class="section" id="section2"><h2>Section 2</h2></section>
+        <section class="section" id="section3"><h2>Section 3</h2></section>
+        <section class="section" id="section4">
+          <div class="overlay js-overlay"></div>
+          <button type="button" class="btn-pause white js-btn-pause">Stop Scrolling</button>
+        </section>
+      </main>
+    </div>
+  </div>
+
+
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
+  <!-- lil-gui -->
+  <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.19/dist/lil-gui.umd.js"></script>
+
+<script>
+/* --------------------------
+  基本セットアップ
+--------------------------- */
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+let smoother = null;          // 現在のSmootherインスタンス
+let isScreenFixed = false;    // 画面固定（スクロール停止）状態
+
+// デモ用パラメータ（GUIと同期）
+const params = {
+  enabled: true,   // 慣性ON/OFF
+  smooth: 1.2      // 慣性の強さ（大きいほど“ぬるっ”と動く）
+};
+
+// Smoother生成（既存があれば殺して作り直す）
+function createSmoother() {
+  if (smoother) smoother.kill();
+  smoother = ScrollSmoother.create({
+    wrapper: '#smooth-wrapper',
+    content: '#smooth-content',
+    smooth: params.smooth,
+    effects: true
+  });
+  if (isScreenFixed) smoother.paused(true); // 画面固定中ならその状態を維持
+}
+
+// Smoother破棄（ネイティブスクロールに戻す）
+function destroySmoother() {
+  if (smoother) {
+    smoother.kill();
+    smoother = null;
+  }
+}
+
+// 初期生成
+if (params.enabled) createSmoother();
+
+/* --------------------------
+  アンカーリンク（Smoother有無で分岐）
+--------------------------- */
+const headerEl = document.querySelector('header');
+function getHeaderHeight() { return headerEl ? headerEl.offsetHeight : 0; }
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    const target = document.querySelector(id);
+    if (!target) return;
+
+    e.preventDefault();
+    const offset = getHeaderHeight();
+
+    if (smoother) {
+      const y = smoother.offset(target, "top") - offset;
+      smoother.scrollTo(y, true);
+    } else {
+      const rect = target.getBoundingClientRect();
+      const y = window.scrollY + rect.top - offset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  });
+});
+
+/* --------------------------
+  スクロール停止/再開ボタン
+--------------------------- */
+const btnPause = document.querySelector('.js-btn-pause');
+const overlay = document.querySelector('.js-overlay');
+
+function applyNativeScrollLock(lock) {
+  document.documentElement.style.overflow = lock ? 'hidden' : '';
+  document.body.style.overflow = lock ? 'hidden' : '';
+}
+
+function switchFixedScreen() {
+  isScreenFixed = !isScreenFixed;
+
+  if (smoother) {
+    smoother.paused(isScreenFixed);
+  } else {
+    applyNativeScrollLock(isScreenFixed);
+  }
+  btnPause.textContent = isScreenFixed ? 'Start Scrolling' : 'Stop Scrolling';
+
+  overlay.classList.toggle('is-active', isScreenFixed);
+}
+btnPause.addEventListener('click', switchFixedScreen);
+
+/* --------------------------
+  lil-gui：UI
+--------------------------- */
+// const gui = new lil.GUI({ title: 'Inertia Scroll Controller' });
+const gui = new lil.GUI();
+gui.add(params, 'enabled').name('慣性スクロール ON').onChange((val)=>{
+  // 画面固定は維持しつつ切り替え
+  if (val) {
+    createSmoother();
+    // ネイティブ側のscrollロックが残っていたら解除
+    applyNativeScrollLock(false);
+  } else {
+    destroySmoother();
+    // 画面固定中ならネイティブ側のロックに切替
+    if (isScreenFixed) applyNativeScrollLock(true);
+  }
+});
+
+gui.add(params, 'smooth', 0.4, 2.5, 0.05).name('慣性の強さ').onChange(()=>{
+  if (params.enabled) {
+    // 値変更は再生成で反映（確実＆安定）
+    const wasPaused = isScreenFixed;
+    createSmoother();
+    if (wasPaused) smoother.paused(true);
+  }
+});
+
+// gui.close(); // 初期は畳んでおく
+</script>
+</body>
+</html>
