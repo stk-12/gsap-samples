@@ -1,6 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Noto+Sans+JP:wght@100..900&display=swap');
 
 :root {
+  --font-ja: "Noto Sans JP", sans-serif;
   --font-en: "Jost", serif;
 
   --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
@@ -35,6 +36,11 @@ button {
   border: 2px solid #000;
   font-family: var(--font-en);
   cursor: pointer;
+}
+
+button.white {
+  color: #111;
+  background: #fff;
 }
 
 /* @media (hover: hover) {
